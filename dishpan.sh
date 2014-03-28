@@ -25,7 +25,7 @@ cat $1 |
 	recordNumber=0
 	for filename in $(ls ${temp})
 	do
-		# echo $filename >&2
+		echo $filename >&2
 		./dishpan.py ${temp}/${filename} $recordNumber $totalRecords 
 		rm ${temp}/${filename}
 		recordNumber=$(($recordNumber+1))

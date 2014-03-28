@@ -1,0 +1,3 @@
+[submodule "esri-geojson"]
+	path = esri-geojson
+	url = https://github.com/Esri/geojson-utils.git
