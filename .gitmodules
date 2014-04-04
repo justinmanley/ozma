@@ -1,3 +1,6 @@
 [submodule "esri-geojson"]
 	path = esri-geojson
 	url = https://github.com/Esri/geojson-utils.git
+[submodule "node_modules/terraformer-geostore-rtree"]
+	path = node_modules/terraformer-geostore-rtree
+	url = https://github.com/Esri/terraformer-geostore-rtree.git
