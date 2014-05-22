@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<style>
+		html { height: 100%; }
+		body { 	height: 100%; margin: 0; padding: 0; }
+		#map-canvas {
+			height: 100%;
+		}
+	</style>
+	<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,geometry&sensor=false">
+	</script>
+	<script type="text/javascript"
+		src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/infobox/1.1.9/src/infobox.js">
+	</script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script>
+		function initialize() {
+			var mapCenter = new google.maps.LatLng(41.78961025632396, -87.59967505931854);
+			var map = new google.maps.Map(document.getElementById("map-canvas"), {
+				center: mapCenter,
+				zoom: 19,
+				zoomControl: { style: 'SMALL' },
+				mapTypeId: google.maps.MapTypeId.HYBRID
+			});		
+
+			var sidewalks;
+			var request = new XMLHttpRequest();
+			request.open('GET', './sidewalks.geojson', false);
+			request.onreadystatechange = function() {
+				if (request.readyState == 4) {
+					if (request.status == 200) { 
+						sidewalks = JSON.parse(request.responseText);
+
+						var sidewalkPolylines = [];
+						for (var i = 0; i < sidewalks.features.length; i++) {
+							var sidewalkSegment = sidewalks.features[i].geometry.coordinates;				
+							sidewalkPolylines.push(new google.maps.Polyline({
+								path: [
+									new google.maps.LatLng(sidewalkSegment[0][0], sidewalkSegment[0][1]),
+									new google.maps.LatLng(sidewalkSegment[1][0], sidewalkSegment[1][1])
+								]
+							}));
+						}
+
+						// var sidewalkSampling = [];
+						for (var i = 0; i < sidewalkPolylines.length; i++) {
+							// sidewalkSampling += samplePolyline(sidewalkPolylines[i], 10);
+							samplePolyline(sidewalkPolylines[i], 5);
+						}						
+					}
+				}
+			};
+			request.send();
+			var voronoi = d3.geom.voronoi();
+
+			function samplePolyline(polyline, distance) {
+				var length = google.maps.geometry.spherical.computeLength(polyline.getPath());
+				var n = Math.floor(length/distance);
+				for (var i = 0; i < n; i++) {
+					var start = polyline.getPath().getAt(0);
+					var end = polyline.getPath().getAt(1);
+					var sampledPoint = google.maps.geometry.spherical.interpolate(start, end, i/n);
+					var marker = new google.maps.Marker({
+						position: new google.maps.LatLng(sampledPoint.A, sampledPoint.k),
+						map: map
+					});				
+				}
+			}			
+		}
+		google.maps.event.addDomListener(window, 'load', initialize);		
+	</script>
+	</head>
+	<body>
+		<div id="map-canvas"></div>
+		<div id="extra"><?php if (isset($extra)) echo $extra; ?></div>
+	</body>
+</html>
