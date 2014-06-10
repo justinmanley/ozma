@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<meta charset="utf8">
+<style>
+	.bar {
+	  fill: steelblue;
+	}
+
+	.axis text {
+	  font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	.x.axis path {
+	  display: none;
+	}
+
+	.x.axis line {
+		display: none;
+	}
+
+	.y.axis path {
+		display: none;
+	}
+
+	.y.axis line {
+		display: none;
+	}	
+</style>
+<svg class="chart"></svg>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+	var margin = { top: 20, right: 30, bottom: 30, left: 40 },
+		width = 960 - margin.left - margin.right,
+		height = 200 - margin.top - margin.bottom;
+
+	var x = d3.scale.linear()
+		.rangeRound([0, width]);
+
+	var y = d3.scale.linear()
+		.rangeRound([height, 0]);
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom")
+		.tickPadding(3);
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left");
+
+	var chart = d3.select('.chart')
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left  + "," + margin.top + ")"	);
+	
+	d3.json('./data.json', function(err, data) {
+		if (err)
+			throw err;
+
+		x.domain([0, d3.max(data, function(d) { return d.pathlength; })]);
+		y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+
+		chart.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxis);
+
+		chart.append("g")
+			.attr("class", "y axis")
+			.call(yAxis.tickValues([0, 5, 10, d3.max(data, function(d) { return d.frequency; })]));
+
+		chart.selectAll(".bar")
+			.data(data)
+			.enter().append("rect")
+			.attr("class", "bar")
+			.attr("x", function(d) { return x(d.pathlength); })
+			.attr("y", function(d) { return y(d.frequency); })
+			.attr("height", function(d) { return height - y(d.frequency); })
+			.attr("width", width/d3.max(data, function(d) { return d.pathlength; }) - 2);
+	});
+</script>

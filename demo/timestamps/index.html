@@ -1,0 +1,41 @@
+<html ng-app="timestampApp">
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/style.css" />
+ 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+	<link rel="stylesheet" href="Leaflet.AwesomeMarkers/dist/leaflet.awesome-markers.css">	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script> 
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.11/angular.min.js"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>	
+	<script src="node_modules/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+	<script src="leaflet.geometryutil.js"></script>
+	<script src="node_modules/moment/moment.js"></script>
+	<script src="Leaflet.PolylineDecorator.js"></script>
+	<script src="Leaflet.AwesomeMarkers/dist/leaflet.awesome-markers.js"></script>
+	<script src="index.js"></script>	
+</head>
+<body ng-controller="timestampEditorCtrl" ng-keypress="switchFeature($event)">
+	<leaflet id="map" center="hydePark" tiles="tiles" decorations="decorations" markers="markers" geojson="geojson" event-broadcast="events"></leaflet>
+	<div id="sidebar">
+		<form name="feature-picker" novalidate id="feature-id">
+			<input type="input" ng-model="currentFeatureId" ng-change="updateFeature(currentFeatureId)"/>
+		</form>
+		<p>Submitted on {{feature.properties["submission-timestamp"]}}.</p>
+		<p>{{feature.geometry.coordinates.length}} vertices.</p>
+		<p>Timestamps: 
+			<br />
+			<form name="timestamps-form">
+				<div class="timestamp-info" ng-repeat="timestamp in timestamps" >
+					<span class="label label-default">{{$index}}:</span>
+					<span class="label label-primary">{{timestamp.message}}</span>
+					<input type="text" ng-model="timestamp.distance" ng-change="updateTimestamp($index, timestamp.distance)"/>
+					<br />
+				</div>
+			</form>
+		</p>
+		<div ng-repeat="timestamp in timestamps">
+			{{timestamp.distance}}
+		</div>
+	</div>
+</body>
+</html>

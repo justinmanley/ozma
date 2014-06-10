@@ -2,3 +2,4 @@ data
 data/*
 node_modules
 demo/sidewalks.geojson
+demo/timestamps/node_modules
