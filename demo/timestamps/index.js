@@ -19,14 +19,6 @@ timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", functi
 			}
 		}
 	});
-	// $scope.eventDetected = "No event detected yet...";
-	// $scope.$on("leafletDirectiveMap.dragstart", function(event) {
-	// 	$scope.eventDetected = "dragStart";
-	// });
-	// $scope.$on("leafletDirectiveMap.click", function(event) {
-	// 	$scope.eventDetected = 'click';
-	// });
-
 	d3.json("./march2014.geojson", function(error, data) {	
 		var features = {},
 			featureIds = [],
@@ -50,33 +42,6 @@ timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", functi
 			$scope.currentFeatureId = featureIds[$scope.currentFeatureIndex];
 			$scope.feature = features[$scope.currentFeatureId];
 			showFeature($scope.feature);
-
-			// var drawnItems = new L.FeatureGroup();
-			// map.addLayer(drawnItems);
-
-			// var options = {
-			// 	position: 'topright', 
-			// 	draw: {
-			// 		polyline: {
-			// 			shapeOptions: {
-			// 				color: '#4788f1',
-			// 				weight: 1
-			// 			}
-			// 		}
-			// 	},
-			// 	edit: {
-			// 		featureGroup: drawnItems,
-			// 		remove: false
-			// 	}
-			// };
-
-			// var drawControl = new L.Control.Draw(options);
-			// map.addControl(drawControl);
-			// map.on('draw:created', function(event) {
-			// 	var type = event.layerType,
-			// 		layer = event.layer;
-			// 	drawnItems.addLayer(layer);
-			// });
 
 			$scope.updateFeature = function(id) {
 				$scope.currentFeatureId = id;
