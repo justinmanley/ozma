@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>	
+	<style>
+		body {
+			margin: 0;
+		}
+		body #map {
+			width: 900px;
+			height: 400px;
+		}
+	</style>
+</head>
+<body>
+	<div id="map"></div>
+	<script>
+		var map = L.map('map').setView([41.78961025632396, -87.59967505931854], 15);
+		L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+		    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.',
+		    maxZoom: 18
+		}).addTo(map);
+
+		var marker = L.marker([41.78961025632396, -87.59967505931854], {
+			draggable: true
+		}).addTo(map);
+		marker.on('drag', function(event) {
+			console.log(event);
+		});
+	</script>
+</body>
+</html>

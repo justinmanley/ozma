@@ -1,5 +1,5 @@
-var timestampApp = angular.module("timestampApp", [ "leaflet-directive" ]);
-timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", function($scope, leafletData) {
+var timestampApp = angular.module("timestampApp", [ "leaflet-directive", "oms" ]);
+timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", "leafletSpiderfierHelpers", function($scope, leafletData, leafletSpiderfierHelpers) {
 	angular.extend($scope, {
 		hydePark: {
 			lng: -87.59967505931854,
@@ -10,12 +10,6 @@ timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", functi
 			url: "http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.jpg",
 			options: {
 				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
-			}
-		},
-		events: {
-			map: {
-				enable: ['click', 'dragstart', 'dragend'],
-				logic: 'emit'
 			}
 		}
 	});
@@ -32,12 +26,12 @@ timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", functi
 		}
 
 		angular.forEach(features, function(feature, i) {
-
 			features[i].properties["submission-timestamp"] = moment(feature.properties["submission-timestamp"])
 				.format('dddd, MMMM Do [at] h:mm[]a');
-		});		
-
+		});
 		leafletData.getMap().then(function(map) {
+			var oms = new leafletSpiderfierHelpers.OverlappingMarkerSpiderfier(map);
+
 			$scope.currentFeatureIndex = 1;
 			$scope.currentFeatureId = featureIds[$scope.currentFeatureIndex];
 			$scope.feature = features[$scope.currentFeatureId];
@@ -163,6 +157,58 @@ timestampApp.controller("timestampEditorCtrl", [ "$scope", "leafletData", functi
 							}
 						};
 					}
+				});
+				// setTimeout(function() {
+					// leafletData.getMarkers().then(function(leafletMarkers) {
+					// 	var marker;
+					// 	console.log($scope.timestamps);
+					// 	for ( key in leafletMarkers ) {
+					// 		if ( leafletMarkers.hasOwnProperty(key)) {
+					// 			console.log(key);
+					// 			marker = leafletMarkers[key];
+					// 			oms.addMarker(marker);
+					// 			if (marker.options.draggable) {
+					// 				marker.on('drag', function(event) {
+					// 					console.log(parseInt(key.slice(8)));
+					// 					var newDistanceAlongLine = L.GeometryUtil.locateOnLine(
+					// 						map,
+					// 						L.polyline(coordinates),
+					// 						event.target._latlng
+					// 					);
+					// 					var closestPoint = L.GeometryUtil.interpolateOnLine(
+					// 						map,
+					// 						L.polyline(coordinates),
+					// 						newDistanceAlongLine
+					// 					);
+					// 					marker.setLatLng(L.GeometryUtil.closest(map, L.polyline(coordinates), event.target._latlng));
+					// 					$scope.timestamps[parseInt(key.slice(8))].distance = newDistanceAlongLine;
+					// 				});
+					// 			}
+					// 		}
+					// 	}
+					// });
+				// }, 1000);
+				leafletData.getMarkers().then(function(leafletMarkers) {
+					angular.forEach(leafletMarkers, function(marker, key) {
+						oms.addMarker(marker);
+						console.log(key);
+						marker.on('drag', function(event) {
+							var newDistanceAlongLine = L.GeometryUtil.locateOnLine(
+								map,
+								L.polyline(coordinates),
+								event.target._latlng
+							);
+							var closestPoint = L.GeometryUtil.interpolateOnLine(
+								map,
+								L.polyline(coordinates),
+								newDistanceAlongLine
+							);
+							// console.log(L.GeometryUtil.closest(map, L.polyline(coordinates), event.target._latlng))
+							marker.setLatLng(L.GeometryUtil.closest(map, L.polyline(coordinates), event.target._latlng));
+							$scope.timestamps[parseInt(key.slice(8))].distance = newDistanceAlongLine;
+							console.log(key);
+						});
+					});
 				});
 			}
 		});
