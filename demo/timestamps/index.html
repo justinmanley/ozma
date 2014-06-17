@@ -1,4 +1,4 @@
-<html ng-app="timestampApp">
+<html ng-app="geojsonViewerApp">
 <head>
 	<link rel="stylesheet" type="text/css" href="../css/style.css" />
  	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
@@ -17,10 +17,12 @@
 	<script src="Leaflet.PolylineDecorator.js"></script>
 	<script src="Leaflet.AwesomeMarkers/dist/leaflet.awesome-markers.js"></script>
 	<script src="Leaflet.OverlappingMarkerSpiderfier.js"></script>	
+	<script src="Leaflet.NumberedMarkerIcon.js"></script>
 	<script src="index.js"></script>
+	<script src="showFeature.js"></script>	
 </head>
 <body ng-controller="timestampEditorCtrl" ng-keypress="switchFeature($event)">
-	<leaflet id="map" center="hydePark" tiles="tiles" decorations="decorations" markers="markers" geojson="geojson"></leaflet>
+	<leaflet id="map" center="hydePark" tiles="tiles" decorations="decorations" markers="markers" geojson="geojson" event-broadcast="events"></leaflet>
 	<div id="sidebar">
 		<form name="feature-picker" novalidate id="feature-id">
 			<input type="input" ng-model="currentFeatureId" ng-change="updateFeature(currentFeatureId)"/>
