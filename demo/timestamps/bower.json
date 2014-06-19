@@ -1,0 +1,37 @@
+{
+  "name": "geojson-viewer",
+  "main": "index.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/manleyjster/ozma",
+  "authors": [
+    "Justin Manley <manleyjster@gmail.com>"
+  ],
+  "description": "A simple Leaflet-based viewer for visually checking timestamp positions.",
+  "keywords": [
+    "leaflet",
+    "angularjs",
+    "geojson",
+    "javascript"
+  ],
+  "dependencies": {
+    "angular": "1.2.x",
+    "leaflet": "0.7.x",
+    "Leaflet.PolylineDecorator": "git://github.com/bbecquet/Leaflet.PolylineDecorator",
+    "Leaflet.GeometryUtil": "git://github.com/makinacorpus/Leaflet.GeometryUtil.git",
+    "Leaflet.OverlappingMarkerSpiderfier": "git://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet.git",
+    "moment": "2.7.x",
+    "Leaflet.awesome-markers": "2.0.x",
+    "Leaflet.draw": "git://github.com/Leaflet/Leaflet.draw.git",
+    "angular-leaflet-directive": "0.7.7",
+    "bootstrap": "3.1.x"
+  },
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

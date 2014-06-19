@@ -1,25 +1,26 @@
 <html ng-app="geojsonViewerApp">
 <head>
 	<link rel="stylesheet" type="text/css" href="../css/style.css" />
- 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-	<link rel="stylesheet" href="Leaflet.AwesomeMarkers/dist/leaflet.awesome-markers.css">	
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script src="http://d3js.org/d3.v3.min.js"></script> 
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.11/angular.min.js"></script>
-	<script src="leaflet-src.js"></script>	
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-	<script src="node_modules/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
-	<script src="oms.js"></script>
-	<script src="leaflet.geometryutil.js"></script>
-	<script src="node_modules/moment/moment.js"></script>
-	<script src="Leaflet.PolylineDecorator.js"></script>
-	<script src="Leaflet.AwesomeMarkers/dist/leaflet.awesome-markers.js"></script>
-	<script src="Leaflet.OverlappingMarkerSpiderfier.js"></script>	
-	<script src="Leaflet.NumberedMarkerIcon.js"></script>
-	<script src="index.js"></script>
-	<script src="showFeature.js"></script>	
+    <link rel="bower_components/Leaflet.draw/dist/leaflet.draw.css"/>
+    <link rel="bower_components/leaflet/dist/leaflet.css"/>
+    <link rel="bower_components/bootstrap/css/bootstrap.css"/>
+    <link rel="bower_components/bootstrap/css/bootstrap-theme.css"/>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
+    <script src="bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+    <script src="bower_components/Leaflet.GeometryUtil/dist/leaflet.geometryutil.js"></script>
+    <script src="bower_components/Leaflet.PolylineDecorator/leaflet.polylineDecorator.js"></script>
+    <script src="bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+    <script src="bower_components/Leaflet.draw/dist/leaflet.draw.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="OverlappingMarkerSpiderfier.js"></script>
+    <script src="Leaflet.NumberedMarkerIcon.js"></script>
+
+    <!-- geojsonViewer application code -->
+    <script src="index.js"></script>
+    <script src="showFeature.js"></script>
 </head>
 <body ng-controller="timestampEditorCtrl" ng-keypress="switchFeature($event)">
 	<leaflet id="map" center="hydePark" tiles="tiles" decorations="decorations" markers="markers" geojson="geojson" event-broadcast="events"></leaflet>
@@ -34,7 +35,7 @@
 			<form name="timestamps-form">
 				<div class="timestamp-info" ng-repeat="timestamp in timestamps" >
 					<span class="label label-default">{{$index}}:</span>
-					<span class="label label-primary">{{timestamp.message}}</span>
+					<span class="label label-primary">{{timestamp.timestampText}}</span>
 					<input type="text" ng-model="timestamp.distance" ng-change="updateTimestamp($index, timestamp.distance)"/>
 					<br />
 				</div>
