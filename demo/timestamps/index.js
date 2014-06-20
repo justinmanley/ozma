@@ -1,4 +1,5 @@
 var geojsonViewerApp = angular.module("geojsonViewerApp", [ "leaflet-directive" ]);
+var geojsonUrl = "data/march2014.geojson";
 geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leafletData", "leafletHelpers", "showFeature", function($scope, $http, leafletData, leafletHelpers, showFeature) {
 	/* Set up map. */
 	angular.extend($scope, {
@@ -18,36 +19,32 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 			logic: 'emit'
 		}
 	});
-	
-	$http({ method: 'GET', url: "./march2014.geojson" })
+
+	$http({ method: 'GET', url: geojsonUrl })
 		.success(function(data) {
-			var features = {},
-				featureIds = [],
+			var featureIds = [],
 				idIndices = {},
 				feature;
+
+			data.features.sort(function(featureA, featureB) {
+				return featureA.properties["database-id"] - featureB.properties["database-id"];
+			});
 
 			for (var i = 0; i < data.features.length; i++) {
 				feature = data.features[i];
 				featureIds.push(feature.properties["database-id"]);
 				idIndices[feature.properties["database-id"]] = i;
-				features[feature.properties["database-id"]] = feature;
 			}
 
-			angular.forEach(features, function(feature, i) {
-				features[i].properties["submission-timestamp"] = moment(feature.properties["submission-timestamp"])
-					.format('dddd, MMMM Do [at] h:mm[]a');
-			});
 			leafletData.getMap().then(function(map) {
 				$scope.currentFeatureIndex = 1;
 				$scope.currentFeatureId = featureIds[$scope.currentFeatureIndex];
-				$scope.feature = features[$scope.currentFeatureId];
-				showFeature(map, $scope.feature);
+				showFeature(map, data, $scope.currentFeatureIndex);
 
 				$scope.updateFeature = function(id) {
 					$scope.currentFeatureId = id;
 					$scope.currentFeatureIndex = idIndices[id];
-					$scope.feature = features[$scope.currentFeatureId];
-					showFeature(map, $scope.feature);
+					showFeature(map, data, $scope.currentFeatureIndex);
 				};
 
 				$scope.switchFeature = function(event) {
@@ -69,9 +66,41 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 							}
 						}
 						$scope.currentFeatureId = featureIds[$scope.currentFeatureIndex];
-						$scope.feature = features[$scope.currentFeatureId];
-						showFeature(map, $scope.feature);
+						showFeature(map, data, $scope.currentFeatureIndex);
 					}
+				};
+
+				$scope.downloadFile = function(featureId) {
+					var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1,
+						isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1,
+						downloadData = featureId ? data.features[featureId] : data,
+						downloadUrl = encodeURI('data:text/json;charset=utf-8,' + JSON.stringify(downloadData));
+
+				    //If in Chrome or Safari - download via virtual link click
+				    if (isChrome || isSafari) {
+				        //Creating new link node.
+				        var link = document.createElement('a');
+				        link.href = downloadUrl;
+				 
+				        if (link.download !== undefined){
+				            //Set HTML5 download attribute. This will prevent file from opening if supported.
+				            var fileName = featureId ? "feature" + featureId + ".geojson" : "march2014.geojson";
+				            link.download = fileName;
+				        }
+				 
+				        //Dispatching click event.
+				        if (document.createEvent) {
+				            var e = document.createEvent('MouseEvents');
+				            e.initEvent('click' ,true ,true);
+				            link.dispatchEvent(e);
+				            return true;
+				        }
+				    }
+				 
+				    // Force file download (whether supported by server).
+				    var query = '?download';
+				 
+				    window.open(downloadUrl + query);
 				};
 
 				$scope.highlightTimestamp = function(event, i) {

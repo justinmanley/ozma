@@ -22,7 +22,7 @@
     "moment": "2.7.x",
     "Leaflet.awesome-markers": "2.0.x",
     "Leaflet.draw": "git://github.com/Leaflet/Leaflet.draw.git",
-    "angular-leaflet-directive": "0.7.7",
+    "angular-leaflet-directive": "manleyjster/angular-leaflet-directive#d69319f3feaaa411b7b426195b64c6897b446e96",
     "bootstrap": "3.1.x"
   },
   "license": "MIT",

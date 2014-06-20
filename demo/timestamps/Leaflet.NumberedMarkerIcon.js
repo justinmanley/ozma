@@ -1,4 +1,4 @@
-L.AwesomeMarkers.NumberedIcon = L.AwesomeMarkers.Icon.extend({
+L.AwesomeMarkers.Icon = L.AwesomeMarkers.Icon.extend({
 	options: {
 		number: '',
 		className: 'awesome-marker'
@@ -25,6 +25,6 @@ L.AwesomeMarkers.NumberedIcon = L.AwesomeMarkers.Icon.extend({
         return div;
 	}
 });
-L.AwesomeMarkers.numberedIcon = function(options) {
-	return new L.AwesomeMarkers.NumberedIcon(options);
+L.AwesomeMarkers.icon = function(options) {
+	return new L.AwesomeMarkers.Icon(options);
 }

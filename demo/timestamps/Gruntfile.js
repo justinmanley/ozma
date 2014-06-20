@@ -85,6 +85,14 @@ module.exports = function(grunt) {
             }
         },
 
+        less: {
+            development: {
+                files: {
+                    "css/style.css": "css/style.less"
+                }
+            }
+        },
+
         concat: {
             app: {
                 src: [
@@ -136,8 +144,8 @@ module.exports = function(grunt) {
                 ]
             },
             dev: {
-                files: [ 'index.js', 'showFeature.js', 'bower_components/', 'Gruntfile.js' ],
-                tasks: [ 'coffee', 'jshint' ]
+                files: [ 'index.js', 'showFeature.js', 'bower_components/', 'Gruntfile.js', 'css/style.less' ],
+                tasks: [ 'coffee', 'less', 'jshint' ]
             }
         }
     });

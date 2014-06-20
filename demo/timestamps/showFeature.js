@@ -1,14 +1,23 @@
-angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "leafletData", "leafletHelpers", function($rootScope, leafletData, leafletHelpers) {
+angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$interval", "leafletData", "leafletHelpers", function($rootScope, $interval, leafletData, leafletHelpers) {
 	var isDefined = leafletHelpers.isDefined,
 		markerDragListener,
 		arrowAnimation;
 
-	return function(map, feature) {
+	return function(map, database, featureId) {
 		var timestamp, time, startTime, endTime,
 			markers = {},
 			timestamps = {},
 			coordinates = [],
-			oms = new OverlappingMarkerSpiderfier(map);
+			oms = new OverlappingMarkerSpiderfier(map),
+			feature = database.features[featureId];
+
+		console.log(featureId);
+		console.log(database.features[featureId]);
+		
+		if (isDefined(feature.properties["submission-timestamp"])) {
+			$rootScope.submissionTimestamp = moment(feature.properties["submission-timestamp"])
+				.format('dddd, MMMM Do [at] h:mm[]a');
+		}
 
 		/* geojson coordinates have the format [lng, lat], but Leaflet wants [lat,lng]. */
 		angular.forEach(feature.geometry.coordinates, function(coordinate) {
@@ -31,7 +40,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "leafle
 		}
 
 		angular.extend($rootScope, {
-			geojson: {
+			leafletGeojson: {
 				data: feature,
 				style: {
 					weight: 2,
@@ -41,16 +50,15 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "leafle
 			},
 			markers: markers,
 			timestamps: timestamps,
-			updateTimestamp: function(id) {
-				var newPosition = L.GeometryUtil.interpolateOnLine(map, coordinates, $rootScope.markers[id].ozma_distance);
-				$rootScope.markers["estimate" + id] = {
+			updateTimestamp: function(id, newDistance) {
+				var newPosition = L.GeometryUtil.interpolateOnLine(map, coordinates, newDistance);
+				$rootScope.markers["estimateMarker" + id] = {
 					lat: newPosition.latLng.lat,
 					lng: newPosition.latLng.lng,
-					message: markers[id].ozma_timeDuration,
 					draggable: true,
 					icon: {
 						type: 'awesomeMarker',
-						icon: 'time',
+						icon: '',
 						markerColor: 'red',
 					}
 				};
@@ -59,10 +67,10 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "leafle
 
 		/* Remove old arrow animation, if necessary, and create new animation. */
 		if (isDefined(arrowAnimation)) {
-			clearInterval(arrowAnimation);
+			$interval.cancel(arrowAnimation);
 		}
 		var arrowOffset = 0;
-		arrowAnimation = window.setInterval(function() {
+		arrowAnimation = $interval(function() {
 			angular.extend($rootScope, {
 				decorations: {
 					arrows: {
@@ -74,7 +82,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "leafle
 	        if(++arrowOffset > 100) {
 	            arrowOffset = 0;
 	        }
-		}, 200);
+		}, 100);
 
 		/* Deregister drag listener, if necessary, and create new listener. */
 		if (isDefined(markerDragListener)) {
@@ -125,6 +133,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "leafle
 				L.polyline(coordinates),
 				L.latLng(timestamp.geometry.coordinates[0][1], timestamp.geometry.coordinates[0][0])
 			);
+			timestamp.properties.pathRatio = estimatedTimestampLength;
 			return {
 				lat: timestamp.geometry.coordinates[0][1],
 				lng: timestamp.geometry.coordinates[0][0],
