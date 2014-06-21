@@ -22,6 +22,11 @@ body #sidebar input,
 body #sidebar button {
   color: black;
 }
+body #sidebar .downloads {
+  position: absolute;
+  bottom: 0px;
+  margin-bottom: 30px;
+}
 body form#feature-id {
   margin: 5px auto;
   width: 50px;

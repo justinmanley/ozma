@@ -17,7 +17,7 @@
     "angular": "1.2.x",
     "leaflet": "0.7.x",
     "Leaflet.PolylineDecorator": "git://github.com/bbecquet/Leaflet.PolylineDecorator",
-    "Leaflet.GeometryUtil": "git://github.com/makinacorpus/Leaflet.GeometryUtil.git",
+    "Leaflet.GeometryUtil": "git://github.com/manleyjster/Leaflet.GeometryUtil.git#9d49ad6502aa07ea678fee1396a8c75021df2852",
     "Leaflet.OverlappingMarkerSpiderfier": "git://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet.git",
     "moment": "2.7.x",
     "Leaflet.awesome-markers": "2.0.x",

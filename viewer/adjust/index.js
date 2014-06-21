@@ -1,5 +1,5 @@
 var geojsonViewerApp = angular.module("geojsonViewerApp", [ "leaflet-directive" ]);
-var geojsonUrl = "data/march2014.geojson";
+var geojsonUrl = "../data/march2014.geojson";
 geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leafletData", "leafletHelpers", "showFeature", function($scope, $http, leafletData, leafletHelpers, showFeature) {
 	/* Set up map. */
 	angular.extend($scope, {
@@ -70,11 +70,12 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 					}
 				};
 
-				$scope.downloadFile = function(featureId) {
+				$scope.downloadFile = function(featureIndex) {
 					var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1,
 						isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1,
-						downloadData = featureId ? data.features[featureId] : data,
-						downloadUrl = encodeURI('data:text/json;charset=utf-8,' + JSON.stringify(downloadData));
+						downloadData = featureIndex ? data.features[featureIndex] : data,
+						downloadUrl = encodeURI('data:text/json;charset=utf-8,' + JSON.stringify(downloadData)),
+						featureId = featureIds[featureIndex];
 
 				    //If in Chrome or Safari - download via virtual link click
 				    if (isChrome || isSafari) {
@@ -101,10 +102,6 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 				    var query = '?download';
 				 
 				    window.open(downloadUrl + query);
-				};
-
-				$scope.highlightTimestamp = function(event, i) {
-					angular.extend($scope.timestamps[i], { focus: true });
 				};
 			});
 		})

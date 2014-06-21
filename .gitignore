@@ -1,6 +1,6 @@
 data
 data/*
 node_modules
-demo/sidewalks.geojson
-demo/timestamps/node_modules
-demo/timestamps/bower_components
+viewer/data/*
+viewer/node_modules
+viewer/bower_components

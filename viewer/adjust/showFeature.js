@@ -4,16 +4,13 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 		arrowAnimation;
 
 	return function(map, database, featureId) {
-		var timestamp, time, startTime, endTime,
+		var timestamp, time, startTime, endTime, delta,
 			markers = {},
 			timestamps = {},
 			coordinates = [],
 			oms = new OverlappingMarkerSpiderfier(map),
 			feature = database.features[featureId];
 
-		console.log(featureId);
-		console.log(database.features[featureId]);
-		
 		if (isDefined(feature.properties["submission-timestamp"])) {
 			$rootScope.submissionTimestamp = moment(feature.properties["submission-timestamp"])
 				.format('dddd, MMMM Do [at] h:mm[]a');
@@ -33,9 +30,12 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 
 			markers[i] = actualMarker(timestamp);
 			markers["estimateMarker" + i] = estimateMarker(timestamp);
+			delta = L.GeometryUtil.distance(map, markers[i], markers["estimateMarker" + i]);
+			database.features[featureId].properties.timestamps[i].properties.pathRatio = markers["estimateMarker" + i].ozma_distance;
 			timestamps[i] = {
 				distance: markers["estimateMarker" + i].ozma_distance,
-				timestampText: time ? time : startTime + ' - ' + endTime
+				timestampText: time ? time : startTime + ' - ' + endTime,
+				estimateIsCorrect: delta < 1 ? "label-primary" : "label-danger" 
 			};
 		}
 
@@ -51,17 +51,19 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 			markers: markers,
 			timestamps: timestamps,
 			updateTimestamp: function(id, newDistance) {
-				var newPosition = L.GeometryUtil.interpolateOnLine(map, coordinates, newDistance);
+				var newPosition = L.GeometryUtil.interpolateOnLine(map, coordinates, newDistance).latLng;
 				$rootScope.markers["estimateMarker" + id] = {
-					lat: newPosition.latLng.lat,
-					lng: newPosition.latLng.lng,
+					lat: newPosition.lat,
+					lng: newPosition.lng,
 					draggable: true,
 					icon: {
 						type: 'awesomeMarker',
 						icon: '',
+						number: id.toString(),
 						markerColor: 'red',
 					}
 				};
+				updateDatabaseEntry(id, newDistance, newPosition);
 			}
 		});
 
@@ -100,7 +102,10 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 				L.polyline(coordinates),
 				marker.leafletEvent.target._latlng
 			));
-			$rootScope.timestamps[markerId].distance = newDistanceAlongLine;
+			var delta = L.GeometryUtil.distance(map, markers[markerId], marker.leafletEvent.target._latlng);
+			$rootScope.timestamps[markerId].pathRatio = newDistanceAlongLine;
+			$rootScope.timestamps[markerId].estimateIsCorrect = delta < 1 ? "label-primary" : "label-danger";
+			updateDatabaseEntry(markerId, newDistanceAlongLine, marker.leafletEvent.target._latlng);
 		});
 
 		/* Cause markers to spiderfy out if they overlap with other markers. */
@@ -128,18 +133,23 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 		}
 
 		function estimateMarker(timestamp) {
-			var estimatedTimestampLength = L.GeometryUtil.locateOnLine(
+			var estimatedTimestampRatio = L.GeometryUtil.locateOnLine(
 				map,
 				L.polyline(coordinates),
 				L.latLng(timestamp.geometry.coordinates[0][1], timestamp.geometry.coordinates[0][0])
 			);
-			timestamp.properties.pathRatio = estimatedTimestampLength;
+			var estimatedTimestampLatLng = L.GeometryUtil.interpolateOnLine(
+				map,
+				L.polyline(coordinates),
+				estimatedTimestampRatio
+			);
+			timestamp.properties.pathRatio = estimatedTimestampRatio;
 			return {
-				lat: timestamp.geometry.coordinates[0][1],
-				lng: timestamp.geometry.coordinates[0][0],
+				lat: estimatedTimestampLatLng.latLng.lat,
+				lng: estimatedTimestampLatLng.latLng.lng,
 				ozma_timeDuration: time ? time : startTime + ' - ' + endTime,
 				draggable: true,
-				ozma_distance: estimatedTimestampLength,
+				ozma_distance: estimatedTimestampRatio,
 				icon: {
 					type: 'awesomeMarker',
 					icon: '',
@@ -147,6 +157,17 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 					markerColor: 'red'
 				}
 			};
+		}
+
+		function updateDatabaseEntry(markerId, updatedDistanceAlongLine, updatedLatLng) {
+			if ( typeof updatedLatLng.lat === 'undefined' || typeof updatedLatLng.lng === 'undefined' ) {
+				throw "[OZMA]: updatedLatLng has undefined coordinates.";
+			}
+
+			database.features[featureId].properties.timestamps[markerId].properties.pathRatio = updatedDistanceAlongLine;			
+			database.features[featureId].properties.timestamps[markerId].geometry.coordinates = [
+				[updatedLatLng.lng, updatedLatLng.lat] 
+			];
 		}
 	};
 }]);
