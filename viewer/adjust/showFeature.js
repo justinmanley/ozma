@@ -35,7 +35,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 			timestamps[i] = {
 				distance: markers["estimateMarker" + i].ozma_distance,
 				timestampText: time ? time : startTime + ' - ' + endTime,
-				estimateIsCorrect: delta < 1 ? "label-primary" : "label-danger" 
+				estimateIsCorrect: delta < 1 ? "label-primary" : "label-danger"
 			};
 		}
 
@@ -103,7 +103,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 				marker.leafletEvent.target._latlng
 			));
 			var delta = L.GeometryUtil.distance(map, markers[markerId], marker.leafletEvent.target._latlng);
-			$rootScope.timestamps[markerId].pathRatio = newDistanceAlongLine;
+			$rootScope.timestamps[markerId].distance = newDistanceAlongLine;
 			$rootScope.timestamps[markerId].estimateIsCorrect = delta < 1 ? "label-primary" : "label-danger";
 			updateDatabaseEntry(markerId, newDistanceAlongLine, marker.leafletEvent.target._latlng);
 		});
@@ -138,18 +138,22 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 				L.polyline(coordinates),
 				L.latLng(timestamp.geometry.coordinates[0][1], timestamp.geometry.coordinates[0][0])
 			);
+			var ratio = estimatedTimestampRatio;
+			if (isDefined(timestamp.properties.pathRatio)) {
+				ratio = timestamp.properties.pathRatio;
+			}
 			var estimatedTimestampLatLng = L.GeometryUtil.interpolateOnLine(
 				map,
 				L.polyline(coordinates),
-				estimatedTimestampRatio
+				ratio
 			);
-			timestamp.properties.pathRatio = estimatedTimestampRatio;
+			timestamp.properties.pathRatio = ratio;
 			return {
 				lat: estimatedTimestampLatLng.latLng.lat,
 				lng: estimatedTimestampLatLng.latLng.lng,
 				ozma_timeDuration: time ? time : startTime + ' - ' + endTime,
 				draggable: true,
-				ozma_distance: estimatedTimestampRatio,
+				ozma_distance: ratio,
 				icon: {
 					type: 'awesomeMarker',
 					icon: '',
@@ -164,10 +168,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 				throw "[OZMA]: updatedLatLng has undefined coordinates.";
 			}
 
-			database.features[featureId].properties.timestamps[markerId].properties.pathRatio = updatedDistanceAlongLine;			
-			database.features[featureId].properties.timestamps[markerId].geometry.coordinates = [
-				[updatedLatLng.lng, updatedLatLng.lat] 
-			];
+			database.features[featureId].properties.timestamps[markerId].properties.pathRatio = updatedDistanceAlongLine;
 		}
 	};
 }]);

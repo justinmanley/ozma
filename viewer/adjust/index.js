@@ -6,7 +6,8 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 		hydePark: {
 			lng: -87.59967505931854,
 			lat: 41.78961025632396,
-			zoom: 15
+			zoom: 15,
+			maxZoom: Infinity
 		},
 		tiles: {
 			url: "http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.jpg",

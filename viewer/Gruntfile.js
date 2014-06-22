@@ -69,7 +69,7 @@ module.exports = function(grunt) {
                 }
             },
             source: {
-                src: [ 'index.js', 'showFeature.js' ]
+                src: [ 'adjust/*.js', 'animate/*.js' ]
             },
             grunt: {
                 src: [ 'Gruntfile.js' ]
@@ -144,7 +144,7 @@ module.exports = function(grunt) {
                 ]
             },
             dev: {
-                files: [ 'index.js', 'showFeature.js', 'bower_components/', 'Gruntfile.js', 'css/style.less' ],
+                files: [ 'adjust/*.js', 'animate/*.js', 'bower_components/', 'Gruntfile.js', 'css/style.less' ],
                 tasks: [ 'coffee', 'less', 'jshint' ]
             }
         }

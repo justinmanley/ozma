@@ -1,0 +1,42 @@
+<html ng-app="geojsonAnimatorApp">
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/style.css" />
+ 	<link rel="stylesheet" href="../bower_components/leaflet-dist/leaflet.css" />
+	<link rel="stylesheet" href="../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">	
+	<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap-theme.css">
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../bower_components/angular/angular.js"></script>
+	<script src="../bower_components/leaflet-dist/leaflet-src.js"></script>
+	<script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="../bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+	<script src="../OverlappingMarkerSpiderfier.js"></script>
+	<script src="../bower_components/Leaflet.GeometryUtil/dist/leaflet.geometryutil.js"></script>
+	<script src="../bower_components/moment/moment.js"></script>
+	<script src="../bower_components/Leaflet.PolylineDecorator/leaflet.polylineDecorator.js"></script>
+	<script src="../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+	<script src="../Leaflet.NumberedMarkerIcon.js"></script>
+
+    <!-- geojsonViewer application code -->
+    <script src="index.js"></script>
+</head>
+<body ng-controller="pathAnimatorCtrl" ng-keypress="switchFeature($event)">
+	<leaflet id="map" center="hydePark" tiles="tiles" event-broadcast="events"></leaflet>
+	<div id="sidebar">
+		<form name="feature-picker" novalidate id="feature-id">
+			<input type="input" ng-model="currentFeatureId" ng-change="updateFeature(currentFeatureId)"/>
+		</form>
+		<p>Submitted on {{submissionTimestamp}}.</p>
+		<p>Timestamps: 
+			<br />
+			<form name="timestamps-form">
+				<div class="timestamp-info input-group" ng-repeat="timestamp in timestamps" >
+					<span class="label label-default">{{$index}}:</span>
+					<span class="label {{timestamp.estimateIsCorrect}}">{{timestamp.timestampText}}</span>
+					<br />
+				</div>
+			</form>
+		</p>
+	</div>
+</body>
+</html>
