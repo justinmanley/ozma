@@ -29,17 +29,9 @@ geojsonAnimatorApp.controller("pathAnimatorCtrl", [
 			.success(function(data) {
 				leafletData.getMap().then(function(map){
 					Util.initialize(map, data);
-
-					Util.setCurrentFeatureIndex(0);
-
 					angular.extend($scope, {
-						currentFeatureIndex: Util.getCurrentFeatureIndex(),
-						currentFeatureId: Util.getCurrentFeatureId(),
-						updateFeature: Util.updateFeature,
-						switchFeature: Util.switchFeature
+						setViewerTime: Util.setViewerTime
 					});
-
-					showFeature(map, data, $scope.currentFeatureIndex);
 				});
 			})
 			.error(function(data, status) {

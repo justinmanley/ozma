@@ -27,22 +27,9 @@
 <body ng-controller="pathAnimatorCtrl" ng-keypress="switchFeature($event)">
 	<leaflet id="map" center="hydePark" tiles="tiles" event-broadcast="events" geojson="leafletGeojson" markers="markers" decorations="decorations"></leaflet>
 	<div id="sidebar">
-		<form name="feature-picker" novalidate id="feature-id">
-			<input type="input" ng-model="currentFeatureId" ng-change="updateFeature(currentFeatureId)"/>
-		</form>
-		<p>Submitted on {{submissionTimestamp}}.</p>
-		<p>Timestamps: 
-			<br />
-			<form name="timestamps-form">
-				<div class="timestamp-info input-group" ng-repeat="timestamp in timestamps" >
-					<span class="label label-default">{{$index}}:</span>
-					<span class="label {{timestamp.estimateIsCorrect}}">{{timestamp.timestampText}}</span>
-					<br />
-				</div>
-			</form>
-		</p>
+		<h3 id="simulation-time-clock">{{currentSimulationTime % 12}}</h3>
 		<form name="time-picker" novalidate id="time-picker">
-			<input type="range" ng-model="viewerTime" min="0" max="24" ng-model="viewerTime" ng-change="updateFeature(currentFeatureId)"/>
+			<input type="range" ng-model="currentSimulationTime" min="0" max="240" ng-model="currentSimulationTime" ng-change="setViewerTime(currentSimulationTime/10)"/>
 		</form>
 	</div>
 </body>

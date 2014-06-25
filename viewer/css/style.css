@@ -29,6 +29,9 @@ body #sidebar .downloads {
   bottom: 0px;
   margin-bottom: 30px;
 }
+body #sidebar #simulation-time-clock {
+  text-align: center;
+}
 body form#feature-id {
   margin: 5px auto;
   width: 50px;

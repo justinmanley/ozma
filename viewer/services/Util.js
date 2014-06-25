@@ -23,55 +23,35 @@ angular.module("geojsonViewerApp").factory("Util",[ "showFeature", function(show
 		},
 
 		updateFeature: function(id) {
-			if (id === "all") {
-				// _this._removeCurrentFeature.call(this);
-				_this.viewActivityAtTime.call(this, this.viewerTime);
-				console.log(this);
-			} else {
-				if (typeof id === 'number' && id % 1 === 0) {
-					this.setCurrentFeatureId(id);
-					showFeature(map, data, currentFeatureIndex);
-				}
+			if (typeof id === 'number' && id % 1 === 0) {
+				this.setCurrentFeatureId(id);
+				showFeature(map, data, currentFeatureIndex);
 			}
 		},
 
-		// _removeCurrentFeature: function() {
-		// 	this.markers = {};
-		// 	this.geojson = {};
-		// 	this.decorations = {};
-		// },
-
-		showAllFeatures: function() {
-			angular.extend(this, {
-				markers: undefined,
-				decorations: {},
-				leafletGeojson: { }
-			});
-		},
-
-		viewActivityAtTime: function(time) {
+		setViewerTime: function(time) {
 			var timestamps = {};
-
 			for (var i = 0; i < data.features.length; i++) {
 				try {
-					var feature = data.features[i];
-					var ratio = _this.animator(feature).at(time);
-					var coordinates = [];
+					var feature = data.features[i],
+						ratio = _this.animator(feature).at(time),
+						coordinates = [],
+						position;
+
 					for (var j = 0; j < feature.geometry.coordinates.length; j++) {
 						coordinates[j] = angular.copy(feature.geometry.coordinates[j]).reverse();
 					}
-					var position = L.GeometryUtil.interpolateOnLine(map, coordinates, ratio).latLng;
+					position = L.GeometryUtil.interpolateOnLine(map, coordinates, ratio).latLng;
 					timestamps[i] = {
 						lat: position.lat,
 						lng: position.lng,
 						icon: {
-							type: 'awesomeMarker',
-							icon: '',
-							number: time % 12,
-							markerColor: 'green'
+							iconUrl: '../images/circlemarker.png',
+							iconSize: [6, 6],
+							shadowUrl: '',
+							shadowSize: [0, 0]
 						}
 					};
-					console.log("Added timestamp " + i);
 				} catch(err) {
 					console.log(err);
 				}
