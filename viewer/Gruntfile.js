@@ -69,7 +69,7 @@ module.exports = function(grunt) {
                 }
             },
             source: {
-                src: [ 'adjust/*.js', 'animate/*.js' ]
+                src: [ 'adjust/*.js', 'animate/*.js', 'services/*.js' ]
             },
             grunt: {
                 src: [ 'Gruntfile.js' ]
@@ -97,7 +97,7 @@ module.exports = function(grunt) {
             app: {
                 src: [
                     'index.js',
-                    'showFeature.js'
+                    'services/*.js'
                 ],
                 dest: 'ozma-geojson-viewer.js'
             },
@@ -133,7 +133,7 @@ module.exports = function(grunt) {
                 livereload: 7777
             },
             build: {
-                files: [ 'index.js', 'showFeature.js', 'bower_components/*', 'Gruntfile.js' ],
+                files: [ 'index.js', 'services/*.js', 'bower_components/*', 'Gruntfile.js' ],
                 tasks: [
                     'jshint',
                     'coffee',
@@ -144,7 +144,14 @@ module.exports = function(grunt) {
                 ]
             },
             dev: {
-                files: [ 'adjust/*.js', 'animate/*.js', 'bower_components/', 'Gruntfile.js', 'css/style.less' ],
+                files: [
+                    'services/*.js',
+                    'adjust/*.js',
+                    'animate/*.js',
+                    'bower_components/',
+                    'Gruntfile.js',
+                    'css/style.less'
+                ],
                 tasks: [ 'coffee', 'less', 'jshint' ]
             }
         }

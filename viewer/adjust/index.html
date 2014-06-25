@@ -19,7 +19,10 @@
 
     <!-- geojsonViewer application code -->
     <script src="index.js"></script>
-    <script src="showFeature.js"></script>
+
+	<!-- services -->
+    <script src="../services/showFeature.js"></script>
+    <script src="../services/Util.js"></script>    
 </head>
 <body ng-controller="timestampEditorCtrl" ng-keypress="switchFeature($event)">
 	<leaflet id="map" center="hydePark" tiles="tiles" decorations="decorations" markers="markers" geojson="leafletGeojson" event-broadcast="events"></leaflet>

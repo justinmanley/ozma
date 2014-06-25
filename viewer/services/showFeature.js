@@ -86,7 +86,7 @@ angular.module("geojsonViewerApp").factory("showFeature", ["$rootScope", "$inter
 	        }
 		}, 100);
 
-		/* Deregister drag listener, if necessary, and create new listener. */
+		/* Deregister old drag listener, if necessary. */
 		if (isDefined(markerDragListener)) {
 			markerDragListener();
 		}

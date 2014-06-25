@@ -1,5 +1,5 @@
 var geojsonAnimatorApp = angular.module("geojsonAnimatorApp", [ "leaflet-directive" ]);
-var geojsonUrl = "../data/march2014ratios.geojson";
+var geojsonUrl = "../data/march2014_ratios.geojson";
 geojsonAnimatorApp.controller("pathAnimatorCtrl", [ "$scope", "$http", function($scope, $http) {
 	/* Set up map. */
 	angular.extend($scope, {

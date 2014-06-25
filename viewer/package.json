@@ -16,9 +16,8 @@
 		"matchdep": "~0.3.0",
 		"qunitjs":"1.14.0",
 		"qunit-theme-ninja": "~1.1.0",
-		"nightwatch": "~0.4.14"
-	},
-	"dependencies": {
-		"mongodb": "1.4.x"
+		"nightwatch": "~0.4.14",
+		"jasmine-core": "2.0.0",
+		"js-beautify": "~1.5.1"		
 	}
 }

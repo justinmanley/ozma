@@ -1,13 +1,12 @@
 var geojsonViewerApp = angular.module("geojsonViewerApp", [ "leaflet-directive" ]);
 var geojsonUrl = "../data/march2014.geojson";
-geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leafletData", "leafletHelpers", "showFeature", function($scope, $http, leafletData, leafletHelpers, showFeature) {
+geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leafletData", "leafletHelpers", "showFeature", "Util", function($scope, $http, leafletData, leafletHelpers, showFeature, Util) {
 	/* Set up map. */
 	angular.extend($scope, {
 		hydePark: {
 			lng: -87.59967505931854,
 			lat: 41.78961025632396,
-			zoom: 15,
-			maxZoom: Infinity
+			zoom: 15
 		},
 		tiles: {
 			url: "http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.jpg",
@@ -23,60 +22,22 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 
 	$http({ method: 'GET', url: geojsonUrl })
 		.success(function(data) {
-			var featureIds = [],
-				idIndices = {},
-				feature;
-
-			data.features.sort(function(featureA, featureB) {
-				return featureA.properties["database-id"] - featureB.properties["database-id"];
-			});
-
-			for (var i = 0; i < data.features.length; i++) {
-				feature = data.features[i];
-				featureIds.push(feature.properties["database-id"]);
-				idIndices[feature.properties["database-id"]] = i;
-			}
-
 			leafletData.getMap().then(function(map) {
+				Util.initialize(map, data);
+
 				$scope.currentFeatureIndex = 1;
-				$scope.currentFeatureId = featureIds[$scope.currentFeatureIndex];
+				$scope.currentFeatureId = Util.indexToId($scope.currentFeatureIndex);
 				showFeature(map, data, $scope.currentFeatureIndex);
 
-				$scope.updateFeature = function(id) {
-					$scope.currentFeatureId = id;
-					$scope.currentFeatureIndex = idIndices[id];
-					showFeature(map, data, $scope.currentFeatureIndex);
-				};
-
-				$scope.switchFeature = function(event) {
-					if (event.keyCode === 100 || event.keyCode === 97 ) {
-						if (event.keyCode === 100 ) {
-							if ($scope.currentFeatureIndex < featureIds.length - 1) {
-								$scope.currentFeatureIndex += 1;
-							}
-							else {
-								$scope.currentFeatureIndex = 0;
-							}
-						}
-						else if ( event.keyCode === 97 ) {
-							if ($scope.currentFeatureIndex > 0 ) {
-								$scope.currentFeatureIndex -= 1;
-							}
-							else {
-								$scope.currentFeatureIndex = featureIds.length - 1;
-							}
-						}
-						$scope.currentFeatureId = featureIds[$scope.currentFeatureIndex];
-						showFeature(map, data, $scope.currentFeatureIndex);
-					}
-				};
+				$scope.updateFeature = Util.updateFeature;
+				$scope.switchFeature = Util.switchFeature;
 
 				$scope.downloadFile = function(featureIndex) {
 					var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1,
 						isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1,
 						downloadData = featureIndex ? data.features[featureIndex] : data,
 						downloadUrl = encodeURI('data:text/json;charset=utf-8,' + JSON.stringify(downloadData)),
-						featureId = featureIds[featureIndex];
+						featureId = Util.indexToId(featureIndex);
 
 				    //If in Chrome or Safari - download via virtual link click
 				    if (isChrome || isSafari) {
