@@ -25,46 +25,17 @@ geojsonViewerApp.controller("timestampEditorCtrl", [ "$scope", "$http", "leaflet
 			leafletData.getMap().then(function(map) {
 				Util.initialize(map, data);
 
-				$scope.currentFeatureIndex = 1;
-				$scope.currentFeatureId = Util.indexToId($scope.currentFeatureIndex);
+				Util.setCurrentFeatureIndex(0);
+
+				angular.extend($scope, {
+					currentFeatureIndex: Util.getCurrentFeatureIndex(),
+					currentFeatureId: Util.getCurrentFeatureId(),
+					updateFeature: Util.updateFeature,
+					switchFeature: Util.switchFeature,
+					downloadFile: Util.downloadFile
+				});
+
 				showFeature(map, data, $scope.currentFeatureIndex);
-
-				$scope.updateFeature = Util.updateFeature;
-				$scope.switchFeature = Util.switchFeature;
-
-				$scope.downloadFile = function(featureIndex) {
-					var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1,
-						isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1,
-						downloadData = featureIndex ? data.features[featureIndex] : data,
-						downloadUrl = encodeURI('data:text/json;charset=utf-8,' + JSON.stringify(downloadData)),
-						featureId = Util.indexToId(featureIndex);
-
-				    //If in Chrome or Safari - download via virtual link click
-				    if (isChrome || isSafari) {
-				        //Creating new link node.
-				        var link = document.createElement('a');
-				        link.href = downloadUrl;
-				 
-				        if (link.download !== undefined){
-				            //Set HTML5 download attribute. This will prevent file from opening if supported.
-				            var fileName = featureId ? "feature" + featureId + ".geojson" : "march2014.geojson";
-				            link.download = fileName;
-				        }
-				 
-				        //Dispatching click event.
-				        if (document.createEvent) {
-				            var e = document.createEvent('MouseEvents');
-				            e.initEvent('click' ,true ,true);
-				            link.dispatchEvent(e);
-				            return true;
-				        }
-				    }
-				 
-				    // Force file download (whether supported by server).
-				    var query = '?download';
-				 
-				    window.open(downloadUrl + query);
-				};
 			});
 		})
 		.error(function(data, status) {
