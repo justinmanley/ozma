@@ -4,9 +4,8 @@ geojsonAnimatorApp.controller("pathAnimatorCtrl", [
 	"$scope",
 	"$http",
 	"Util",
-	"showFeature",
 	"leafletData",
-	function($scope, $http, Util, showFeature, leafletData) {
+	function($scope, $http, Util, leafletData) {
 		/* Set up map. */
 		angular.extend($scope, {
 			hydePark: {
@@ -30,8 +29,11 @@ geojsonAnimatorApp.controller("pathAnimatorCtrl", [
 				leafletData.getMap().then(function(map){
 					Util.initialize(map, data);
 					angular.extend($scope, {
-						setViewerTime: Util.setViewerTime
+						setViewerTime: Util.setViewerTime,
+						formatTime: Util._numberToTimestring
 					});
+					$scope.currentSimulationTime = 0;
+					Util.setViewerTime.call($scope, $scope.currentSimulationTime);
 				});
 			})
 			.error(function(data, status) {

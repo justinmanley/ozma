@@ -31,6 +31,7 @@ angular.module("geojsonViewerApp").factory("Util",[ "showFeature", function(show
 
 		setViewerTime: function(time) {
 			var timestamps = {};
+
 			for (var i = 0; i < data.features.length; i++) {
 				try {
 					var feature = data.features[i],
@@ -41,23 +42,35 @@ angular.module("geojsonViewerApp").factory("Util",[ "showFeature", function(show
 					for (var j = 0; j < feature.geometry.coordinates.length; j++) {
 						coordinates[j] = angular.copy(feature.geometry.coordinates[j]).reverse();
 					}
-					position = L.GeometryUtil.interpolateOnLine(map, coordinates, ratio).latLng;
-					timestamps[i] = {
-						lat: position.lat,
-						lng: position.lng,
-						icon: {
-							iconUrl: '../images/circlemarker.png',
-							iconSize: [6, 6],
-							shadowUrl: '',
-							shadowSize: [0, 0]
-						}
-					};
+					if (ratio !== null) {
+						position = L.GeometryUtil.interpolateOnLine(map, coordinates, ratio).latLng;
+						timestamps[i] = {
+							lat: position.lat,
+							lng: position.lng,
+							icon: {
+								iconUrl: '../images/circlemarker.png',
+								iconSize: [6, 6],
+								shadowUrl: '',
+								shadowSize: [0, 0]
+							}
+						};
+					} else {
+						delete this.markers[i];
+					}
 				} catch(err) {
-					console.log(err);
+					// console.log(err);
 				}
 			}
+			var studentsOnMap = 0;
+			for (var prop in timestamps) {
+				if (timestamps.hasOwnProperty(prop)) {
+					studentsOnMap += 1;
+				}
+			}
+
 			angular.extend(this, {
-				markers: timestamps
+				markers: timestamps,
+				studentsOnMap: studentsOnMap
 			});
 		},
 
@@ -150,13 +163,13 @@ angular.module("geojsonViewerApp").factory("Util",[ "showFeature", function(show
 		animator: function(feature) {
 			/* Make sure that the timestamps are sorted by pathRatio. */
 			feature.properties.timestamps.sort(function(a, b) {
-				return b.properties.pathRatio - a.properties.pathRatio;
+				return a.properties.pathRatio - b.properties.pathRatio;
 			});
 			var timestamps = feature.properties.timestamps;
 
 			return {
 				at: function(time) {
-					if (time < timestamps[0].startTime) {
+					if (time < _this._timestringToInteger(timestamps[0].properties.startTime)) {
 						return null;
 					} else {
 						return _this._segmentAnimator(feature, 0).at(time);
@@ -164,10 +177,6 @@ angular.module("geojsonViewerApp").factory("Util",[ "showFeature", function(show
 				}
 			};
 		},
-
-		// viewTime: function() {
-
-		// },
 
 		_stationaryAnimator: function(feature, i) {
 			var timestamp = feature.properties.timestamps[i],
@@ -260,6 +269,30 @@ angular.module("geojsonViewerApp").factory("Util",[ "showFeature", function(show
 			}
 
 			return hour + minute;
+		},
+
+		_numberToTimestring: function(time) {
+			var hour = Math.floor(time),
+				minutes = Math.round((time - hour)*60),
+				timeString;
+
+			if (minutes < 10) {
+				minutes = "0" + minutes;
+			}
+
+			if (0 < hour && hour < 12) {
+				timeString = hour + ":" + minutes + " a.m.";
+			} else if (12 < hour && hour < 24) {
+				timeString = hour % 12 + ":" + minutes + " p.m.";
+			}
+
+			if (hour === 0 || hour === 24) {
+				timeString = "12" + ":" + minutes + " a.m.";
+			} else if (hour === 12) {
+				timeString = "12" + ":" + minutes + " p.m";
+			}
+
+			return timeString;
 		}
 	};
 	return _this;

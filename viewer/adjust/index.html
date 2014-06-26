@@ -42,6 +42,12 @@
 				</div>
 			</form>
 		</p>
+		<p>
+			This tool is designed for viewing a collection of geojson paths and timestamps.  That is, this viewer accepts a <a href="http://geojson.org/geojson-spec.html#feature-collection-objects">GeoJson <code>FeatureCollection</code></a> in which each <a href="http://geojson.org/geojson-spec.html#feature-objects">GeoJson <code>Feature</code></a> consists of a <a href="http://geojson.org/geojson-spec.html#linestring"><code>LineString</code></a> and an array of timestamps in its <code>properties</code> object.
+		</p>
+		<p>
+			The <code>A</code> and <code>D</code> keys step backwards and forwards, respectively, through features in the GeoJson FeatureCollection.  <span style="color: #87ceeb">Blue</span> markers have been placed exactly as reported by the users.  <span style="color: #db1d0f">Red</span> markers have been been positioned based on their calculated distance along the path, computed using <a href="https://github.com/makinacorpus/Leaflet.GeometryUtil">Leaflet.GeometryUtil</a>.
+		</p>
 		<div class="downloads">
 			<button ng-click="downloadFile(currentFeatureIndex)" class="btn btn-default">Download Feature {{currentFeatureId}}</button>
 			<button ng-click="downloadFile()" class="btn btn-default">Download All Features</button>

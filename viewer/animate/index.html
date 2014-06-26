@@ -27,10 +27,13 @@
 <body ng-controller="pathAnimatorCtrl" ng-keypress="switchFeature($event)">
 	<leaflet id="map" center="hydePark" tiles="tiles" event-broadcast="events" geojson="leafletGeojson" markers="markers" decorations="decorations"></leaflet>
 	<div id="sidebar">
-		<h3 id="simulation-time-clock">{{currentSimulationTime % 12}}</h3>
+		<p>The map is currently showing the positions of survey respondents at {{formatTime(currentSimulationTime/60)}}.  These positions are interpolated from the paths and timestamps reported by survey respondents.</p>
+		<p>Drag the slider to change the displayed time.</p>
+		<h2 id="simulation-time-clock">{{formatTime(currentSimulationTime/60)}}</h2>
 		<form name="time-picker" novalidate id="time-picker">
-			<input type="range" ng-model="currentSimulationTime" min="0" max="240" ng-model="currentSimulationTime" ng-change="setViewerTime(currentSimulationTime/10)"/>
+			<input type="range" ng-model="currentSimulationTime" min="0" max="1440" ng-model="currentSimulationTime" ng-change="setViewerTime(currentSimulationTime/60)"/>
 		</form>
+		<p>There are currently {{studentsOnMap}} students on the map.  (Recall that the data set contains responses from 246 students).</p>
 	</div>
 </body>
 </html>

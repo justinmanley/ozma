@@ -7,7 +7,7 @@ body #map {
   float: left;
 }
 body #sidebar {
-  background-color: #878787;
+  background-color: #474747;
   width: 30%;
   height: 100%;
   box-shadow: inset 0 0 20px #484848;
@@ -31,6 +31,24 @@ body #sidebar .downloads {
 }
 body #sidebar #simulation-time-clock {
   text-align: center;
+  margin-bottom: 60px;
+  font-family: serif;
+  font-size: 35pt;
+}
+body #sidebar .example-marker-red {
+  background: url("../bower_components/Leaflet.awesome-markers/dist/images/markers-plain.png") no-repeat 0 0;
+  width: 35px;
+  height: 46px;
+  left: 0;
+  top: 0;
+  display: block;
+  background-position: 0 0;
+  margin: 0;
+  overflow: auto;
+  border-image-width: 0;
+}
+body #sidebar a {
+  color: #ffffff;
 }
 body form#feature-id {
   margin: 5px auto;
